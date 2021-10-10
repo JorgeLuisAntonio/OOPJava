@@ -7,8 +7,10 @@ Il va s'agir de développer un "magasin" en plusieurs étapes.
 
 ## Consignes générales
 
-Vous travaillerez en binôme.
-Vous déposerez votre mini-projet via Madoc dans les délais indiqués.
+1. Vous travaillerez en binôme.
+2. Vous indiquerez la composition de votre binome sur le document partagé [suivant](https://docs.google.com/spreadsheets/d/1JvtT8TqX3M6Fc8hROxVpzr4ekxg1v0mb1pcAeg4zo1A/edit?usp=sharing)
+3. Vous rendrez votre projet terminé d'ici à ***** vendredi 15 octobre 2021 18h00 *****.
+4. Vous déposerez votre mini-projet via [Madoc](https://madoc.univ-nantes.fr/course/view.php?id=32488) en respectant le délai indiqué.
 
 
 ## Le magasin "générique"
@@ -25,7 +27,7 @@ de valider votre implémentation.
 
 ## Des produits à vendre
 
-dans le paquetage `mesproduits` du dossier `src/` Vous définirez un ensemble de produits à vendre
+Dans le paquetage `mesproduits` du dossier `src/` Vous définirez un ensemble de produits à vendre
 selon votre inspiration. 
 
 _Exemple :_ cela peut-être des sous-marins, des cartes pokemons ou des fruits et légumes.
