@@ -2,18 +2,17 @@ package magasin;
 
 import magasin.exceptions.*;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class Magasin implements iStock, iClientele, iPanier {
 
     // TODO
     Map<iArticle, Integer> stocksActuels ;
+    Set<iClient> clients ;
 
     public Magasin() {
         stocksActuels = new HashMap<>() ;
+        clients = new HashSet<>() ;
     }
 
 
@@ -60,20 +59,21 @@ public class Magasin implements iStock, iClientele, iPanier {
 
     @Override
     public List<iArticle> listerArticlesEnStockParNom() {
-        // TODO
-        return null;
+        List<iArticle> articles = new ArrayList<>(stocksActuels.keySet()) ;
+        Collections.sort(articles, iArticle.COMPARATEUR_NOM);
+        return articles;
     }
 
     @Override
     public List<iArticle> listerArticlesEnStockParReference() {
-        // TODO
-        return null;
+        List<iArticle> articles = new ArrayList<>(stocksActuels.keySet()) ;
+        Collections.sort(articles, iArticle.COMPARATEUR_REFERENCE);
+        return articles;
     }
 
     @Override
     public List<Map.Entry<iArticle, Integer>> listerStock() {
-        // TODO
-        return null;
+        return new ArrayList<>(stocksActuels.entrySet());
     }
 
     // iClientele
@@ -81,13 +81,15 @@ public class Magasin implements iStock, iClientele, iPanier {
 
     @Override
     public void enregistrerNouveauClient(iClient nouveauClient) throws ClientDejaEnregistreException {
-        // TODO
+        boolean ajout = clients.add(nouveauClient) ;
+        if (!ajout) throw new ClientDejaEnregistreException() ;
     }
 
     @Override
     public List<iClient> listerLesClientsParId() {
-        // TODO
-        return null;
+        List<iClient> listeClients = new ArrayList<>(clients) ;
+        Collections.sort(listeClients, iClient.COMPARATEUR_ID);
+        return listeClients;
     }
 
 
