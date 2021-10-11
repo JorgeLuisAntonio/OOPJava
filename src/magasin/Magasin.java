@@ -8,6 +8,7 @@ import java.util.Map;
 public class Magasin implements iStock, iClientele, iPanier {
 
     // TODO
+    Map<iArticle, Integer> stocksActuels ;
 
     public Magasin() {
         // TODO
@@ -103,7 +104,7 @@ public class Magasin implements iStock, iClientele, iPanier {
             ArticleHorsStockException {
 
 
-        if (quantite <=0 ) throw new QuantiteNegativeOuNulleException() ;
+        if (quantite <= 0) throw new QuantiteNegativeOuNulleException() ;
     }
 
     @Override
