@@ -1,7 +1,7 @@
 package monapplication;
 
 import magasin.*;
-import mesproduits.*;
+//import mesproduits.*;
 
 public class MonApplication {
 

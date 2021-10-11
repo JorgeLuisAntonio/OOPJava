@@ -13,12 +13,10 @@ import java.util.*;
 
 public class Commande implements Comparable<Commande> {
 
- Map<iArticle,Integer> achats ;
-    // TODO
+    Map<iArticle, Integer> achats;
 
     public Commande() {
-        achats=new HashMap<>();
-        // TODO
+        achats = new HashMap<>();
     }
 
     /**
@@ -27,7 +25,6 @@ public class Commande implements Comparable<Commande> {
      * @return
      */
     public boolean estVide() {
-        // TODO
         return achats.isEmpty();
     }
 
@@ -39,8 +36,8 @@ public class Commande implements Comparable<Commande> {
      * @throws QuantiteNegativeOuNulleException si la quantité indiquée est négative ou nulle
      */
     public void ajout(int quantite, iArticle articleCommande) throws QuantiteNegativeOuNulleException {
-        if(quantite<=0) throw new  QuantiteNegativeOuNulleException();
-        achats.put(articleCommande,quantite);
+        if (quantite <= 0) throw new QuantiteNegativeOuNulleException();
+        achats.put(articleCommande, quantite);
     }
 
     /**
@@ -54,11 +51,17 @@ public class Commande implements Comparable<Commande> {
      */
     public void retirer(int quantite, iArticle articleCommande) throws QuantiteNegativeOuNulleException, QuantiteSuppPanierException, ArticleHorsPanierException {
 
-        if(quantite<=0)throw new QuantiteNegativeOuNulleException();
-        if(quantite>achats.size()) throw new QuantiteSuppPanierException();
-      if(!(achats.containsKey(articleCommande))) throw new ArticleHorsPanierException();
-        achats.put(articleCommande, achats.get(articleCommande) - quantite );
+        if (quantite <= 0) throw new QuantiteNegativeOuNulleException();
+        if (! achats.containsKey(articleCommande)) throw new ArticleHorsPanierException();
 
+        int quantiteActuelle = achats.get(articleCommande) ;
+        if (quantite > quantiteActuelle) throw new QuantiteSuppPanierException();
+
+        if (quantite == quantiteActuelle) {
+            achats.remove(articleCommande) ;
+        } else {
+            achats.put(articleCommande, quantiteActuelle - quantite);
+        }
     }
 
     /**
@@ -70,7 +73,7 @@ public class Commande implements Comparable<Commande> {
     public List<iArticle> listerArticlesParNom() {
 
         List<iArticle> articles = new ArrayList<>();
-        Collections.sort(articles,iArticle.COMPARATEUR_NOM);
+        Collections.sort(articles, iArticle.COMPARATEUR_NOM);
         return articles;
     }
 
@@ -82,7 +85,7 @@ public class Commande implements Comparable<Commande> {
      */
     public List<iArticle> listerArticlesParReference() {
         List<iArticle> articles = new ArrayList<>();
-        Collections.sort(articles,iArticle.COMPARATEUR_REFERENCE);
+        Collections.sort(articles, iArticle.COMPARATEUR_REFERENCE);
         return articles;
     }
 
@@ -93,8 +96,9 @@ public class Commande implements Comparable<Commande> {
      * @return
      */
     public List<Map.Entry<iArticle, Integer>> listerCommande() {
-
-     return new ArrayList<>(achats.entrySet());
+        List<Map.Entry<iArticle,Integer>> commandeListe = new ArrayList<>(achats.entrySet()) ;
+        commandeListe.sort(Map.Entry.comparingByKey(iArticle.COMPARATEUR_NOM));
+        return commandeListe ;
     }
 
 
@@ -105,8 +109,7 @@ public class Commande implements Comparable<Commande> {
      * @return la quantité commmandée
      */
     public int quantite(iArticle article) {
-
-        return  achats.get(article);
+        return achats.get(article);
     }
 
     /**
@@ -116,20 +119,23 @@ public class Commande implements Comparable<Commande> {
      */
     public double montant() {
 
-        List<Map.Entry<iArticle, Integer>>  list= listerCommande();
-        double mont=0.0;
-      for (int i=0; i< list.size();i++){
-        iArticle article=list.get(i).getKey();
-        int quantite= list.get(i).getValue();
-        mont+= article.prix()* quantite;
-      }
-        return mont;
+        List<Map.Entry<iArticle, Integer>> liste = listerCommande();
+        double montant = 0.0;
+//        for (int i = 0; i < list.size(); i++) {
+//            iArticle article = list.get(i).getKey();
+//            int quantite = list.get(i).getValue();
+//            montant += article.prix() * quantite;
+//        }
+        for (Map.Entry<iArticle, Integer> entree : liste) {
+            montant += entree.getValue() * entree.getKey().prix() ;
+        }
+        return montant;
     }
 
     @Override
     public int compareTo(Commande o) {
-       // this>o=1   this<0=-1 this=o=0
-        return (int) (this.montant()-o.montant());
+        // this>o=1   this<0=-1 this=o=0
+        return (int) (this.montant() - o.montant());
 
 
     }
