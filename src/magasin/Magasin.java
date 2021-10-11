@@ -19,14 +19,16 @@ public class Magasin implements iStock, iClientele, iPanier {
     @Override
     public void referencerAuStock(iArticle nouvelArticle, int quantiteNouvelle)
             throws ArticleDejaEnStockException, QuantiteNegativeException {
-        // TODO
+
+        if (quantiteNouvelle < 0) throw new QuantiteNegativeException() ;
     }
 
 
     @Override
     public void reapprovisionnerStock(iArticle articleMaj, int quantiteAjoutee)
             throws ArticleHorsStockException, QuantiteNegativeOuNulleException {
-        // TODO
+
+        if (quantiteAjoutee <= 0) throw new QuantiteNegativeOuNulleException() ;
     }
 
     @Override
@@ -88,7 +90,9 @@ public class Magasin implements iStock, iClientele, iPanier {
             throws ClientInconnuException,
             QuantiteNegativeOuNulleException,
             ArticleHorsStockException, QuantiteEnStockInsuffisanteException {
-        // TODO
+
+
+        if (quantite <= 0) throw new QuantiteNegativeOuNulleException() ;
     }
 
     @Override
@@ -97,7 +101,9 @@ public class Magasin implements iStock, iClientele, iPanier {
             QuantiteNegativeOuNulleException,
             QuantiteSuppPanierException, ArticleHorsPanierException,
             ArticleHorsStockException {
-        // TODO
+
+
+        if (quantite <=0 ) throw new QuantiteNegativeOuNulleException() ;
     }
 
     @Override
