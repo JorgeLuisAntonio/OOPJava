@@ -2,6 +2,8 @@ package magasin;
 
 import magasin.exceptions.*;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -11,7 +13,7 @@ public class Magasin implements iStock, iClientele, iPanier {
     Map<iArticle, Integer> stocksActuels ;
 
     public Magasin() {
-        // TODO
+        stocksActuels = new HashMap<>() ;
     }
 
 
@@ -22,6 +24,9 @@ public class Magasin implements iStock, iClientele, iPanier {
             throws ArticleDejaEnStockException, QuantiteNegativeException {
 
         if (quantiteNouvelle < 0) throw new QuantiteNegativeException() ;
+        if (stocksActuels.containsKey(nouvelArticle)) throw new ArticleDejaEnStockException() ;
+
+        stocksActuels.put(nouvelArticle,quantiteNouvelle) ;
     }
 
 
@@ -30,18 +35,26 @@ public class Magasin implements iStock, iClientele, iPanier {
             throws ArticleHorsStockException, QuantiteNegativeOuNulleException {
 
         if (quantiteAjoutee <= 0) throw new QuantiteNegativeOuNulleException() ;
+        if (! stocksActuels.containsKey(articleMaj)) throw new ArticleHorsStockException() ;
+
+        stocksActuels.put(articleMaj, stocksActuels.get(articleMaj) + quantiteAjoutee );
     }
 
     @Override
     public int consulterQuantiteEnStock(iArticle articleRecherche) throws ArticleHorsStockException {
-        // TODO
-        return -1;
+         if (! stocksActuels.containsKey(articleRecherche)) throw new ArticleHorsStockException() ;
+        return stocksActuels.get(articleRecherche);
     }
 
     @Override
     public void retirerDuStock(int quantiteRetiree, iArticle articleMaj)
             throws ArticleHorsStockException, QuantiteNegativeOuNulleException, QuantiteEnStockInsuffisanteException {
-        // TODO
+
+        if (quantiteRetiree < 0) throw new QuantiteNegativeOuNulleException() ;
+        if (stocksActuels.containsKey(articleMaj)) throw new ArticleHorsStockException() ;
+
+        if (stocksActuels.get(articleMaj) < quantiteRetiree) throw new QuantiteEnStockInsuffisanteException() ;
+        stocksActuels.put(articleMaj, stocksActuels.get(articleMaj) - quantiteRetiree );
     }
 
 
