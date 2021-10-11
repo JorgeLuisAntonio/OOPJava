@@ -46,3 +46,5 @@ Vous définirez également des cas de tests pour valider vos produits dans `test
 Vous développerez dans `src/monapplication` une mini-application en mode console 
 permettant de "jouer" avec votre magasin de produits à vendre. 
 Il devra y avoir des données, des commandes, etc.  pré-chargées dans l'application.
+
+https://random-data-api.com/documentation
