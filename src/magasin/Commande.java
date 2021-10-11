@@ -1,11 +1,11 @@
 package magasin;
 
 import magasin.exceptions.ArticleHorsPanierException;
+import magasin.exceptions.QuantiteNegativeException;
 import magasin.exceptions.QuantiteNegativeOuNulleException;
 import magasin.exceptions.QuantiteSuppPanierException;
 
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * défini une commande, c'est-à-dire des articles associés à leur quantité commandée
@@ -13,9 +13,11 @@ import java.util.Map;
 
 public class Commande implements Comparable<Commande> {
 
+ Map<iArticle,Integer> achats ;
     // TODO
 
     public Commande() {
+        achats=new HashMap<>();
         // TODO
     }
 
@@ -26,7 +28,7 @@ public class Commande implements Comparable<Commande> {
      */
     public boolean estVide() {
         // TODO
-        return false;
+        return achats.isEmpty();
     }
 
     /**
@@ -36,9 +38,9 @@ public class Commande implements Comparable<Commande> {
      * @param articleCommande article à considérer
      * @throws QuantiteNegativeOuNulleException si la quantité indiquée est négative ou nulle
      */
-    public void ajout(int quantite, iArticle articleCommande)
-            throws QuantiteNegativeOuNulleException {
-        // TODO
+    public void ajout(int quantite, iArticle articleCommande) throws QuantiteNegativeOuNulleException {
+        if(quantite<=0) throw new  QuantiteNegativeOuNulleException();
+        achats.put(articleCommande,quantite);
     }
 
     /**
@@ -50,10 +52,13 @@ public class Commande implements Comparable<Commande> {
      * @throws QuantiteSuppPanierException      si la quantité indiquée est supp à celle dans da commande
      * @throws ArticleHorsPanierException       si l'article considéré n'est pas dans la commande
      */
-    public void retirer(int quantite, iArticle articleCommande)
-            throws QuantiteNegativeOuNulleException,
-            QuantiteSuppPanierException, ArticleHorsPanierException {
-        // TODO
+    public void retirer(int quantite, iArticle articleCommande) throws QuantiteNegativeOuNulleException, QuantiteSuppPanierException, ArticleHorsPanierException {
+
+        if(quantite<=0)throw new QuantiteNegativeOuNulleException();
+        if(quantite>achats.size()) throw new QuantiteSuppPanierException();
+      if(!(achats.containsKey(articleCommande))) throw new ArticleHorsPanierException();
+        achats.put(articleCommande, achats.get(articleCommande) - quantite );
+
     }
 
     /**
@@ -63,8 +68,10 @@ public class Commande implements Comparable<Commande> {
      * @return
      */
     public List<iArticle> listerArticlesParNom() {
-        // TODO
-        return null;
+
+        List<iArticle> articles = new ArrayList<>();
+        Collections.sort(articles,iArticle.COMPARATEUR_NOM);
+        return articles;
     }
 
     /**
@@ -74,8 +81,9 @@ public class Commande implements Comparable<Commande> {
      * @return
      */
     public List<iArticle> listerArticlesParReference() {
-        // TODO
-        return null;
+        List<iArticle> articles = new ArrayList<>();
+        Collections.sort(articles,iArticle.COMPARATEUR_REFERENCE);
+        return articles;
     }
 
     /**
@@ -85,8 +93,8 @@ public class Commande implements Comparable<Commande> {
      * @return
      */
     public List<Map.Entry<iArticle, Integer>> listerCommande() {
-        // TODO
-        return null;
+
+     return new ArrayList<>(achats.entrySet());
     }
 
 
@@ -97,8 +105,8 @@ public class Commande implements Comparable<Commande> {
      * @return la quantité commmandée
      */
     public int quantite(iArticle article) {
-        // TODO
-        return -1;
+
+        return  achats.get(article);
     }
 
     /**
@@ -107,13 +115,22 @@ public class Commande implements Comparable<Commande> {
      * @return
      */
     public double montant() {
-        // TODO
-        return -1.0;
+
+        List<Map.Entry<iArticle, Integer>>  list= listerCommande();
+        double mont=0.0;
+      for (int i=0; i< list.size();i++){
+        iArticle article=list.get(i).getKey();
+        int quantite= list.get(i).getValue();
+        mont+= article.prix()* quantite;
+      }
+        return mont;
     }
 
     @Override
     public int compareTo(Commande o) {
-        // TODO
-        return 0;
+       // this>o=1   this<0=-1 this=o=0
+        return (int) (this.montant()-o.montant());
+
+
     }
 }
