@@ -1,7 +1,6 @@
 package magasin;
 
 import magasin.exceptions.ArticleHorsPanierException;
-import magasin.exceptions.QuantiteNegativeException;
 import magasin.exceptions.QuantiteNegativeOuNulleException;
 import magasin.exceptions.QuantiteSuppPanierException;
 
@@ -37,7 +36,12 @@ public class Commande implements Comparable<Commande> {
      */
     public void ajout(int quantite, iArticle articleCommande) throws QuantiteNegativeOuNulleException {
         if (quantite <= 0) throw new QuantiteNegativeOuNulleException();
-        achats.put(articleCommande, quantite);
+        Integer quantiteActuelle = achats.get(articleCommande) ;
+        if (quantiteActuelle == null) {
+            achats.put(articleCommande, quantite) ;
+        } else {
+            achats.replace(articleCommande,quantiteActuelle+quantite) ;
+        }
     }
 
     /**
@@ -121,11 +125,6 @@ public class Commande implements Comparable<Commande> {
 
         List<Map.Entry<iArticle, Integer>> liste = listerCommande();
         double montant = 0.0;
-//        for (int i = 0; i < list.size(); i++) {
-//            iArticle article = list.get(i).getKey();
-//            int quantite = list.get(i).getValue();
-//            montant += article.prix() * quantite;
-//        }
         for (Map.Entry<iArticle, Integer> entree : liste) {
             montant += entree.getValue() * entree.getKey().prix() ;
         }
@@ -134,9 +133,6 @@ public class Commande implements Comparable<Commande> {
 
     @Override
     public int compareTo(Commande o) {
-        // this>o=1   this<0=-1 this=o=0
         return (int) (this.montant() - o.montant());
-
-
     }
 }

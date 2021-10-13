@@ -6,7 +6,6 @@ import java.util.*;
 
 public class Magasin implements iStock, iClientele, iPanier {
 
-    // TODO
     Map<iArticle, Integer> stocksActuels ;
     Set<iClient> clients ;
     Map<iClient, Commande> paniers ;
@@ -90,6 +89,7 @@ public class Magasin implements iStock, iClientele, iPanier {
         boolean ajout = clients.add(nouveauClient) ;
         if (!ajout) throw new ClientDejaEnregistreException() ;
         paniers.put(nouveauClient, new Commande()) ;
+        commandesFinies.put(nouveauClient, new ArrayList<>()) ;
     }
 
     @Override
@@ -104,8 +104,11 @@ public class Magasin implements iStock, iClientele, iPanier {
 
     @Override
     public Commande consulterPanier(iClient client) throws ClientInconnuException {
-        if (! clients.contains(client) || ! paniers.containsKey(client)) throw new ClientInconnuException() ;
-        return paniers.get(client);
+
+        Commande cmd = paniers.get(client) ;
+        if (! clients.contains(client) || cmd == null) throw new ClientInconnuException() ;
+
+        return cmd ;
     }
 
     @Override
@@ -114,16 +117,10 @@ public class Magasin implements iStock, iClientele, iPanier {
             QuantiteNegativeOuNulleException,
             ArticleHorsStockException, QuantiteEnStockInsuffisanteException {
 
-        if (! clients.contains(client)) throw new ClientInconnuException() ;
-        if (quantite <= 0) throw new QuantiteNegativeOuNulleException() ;
+        Commande cmd = paniers.get(client) ;
+        if (! clients.contains(client) || cmd == null) throw new ClientInconnuException() ;
 
-        if (! stocksActuels.containsKey(article)) throw new ArticleHorsStockException() ;
-        int quantiteActuelle = stocksActuels.get(article) ;
-        if (quantiteActuelle - quantite < 0) throw new QuantiteEnStockInsuffisanteException() ;
-
-        Commande cmdActuelle = paniers.get(client) ;
-        cmdActuelle.ajout(quantiteActuelle,article);
-
+        cmd.ajout(quantite,article);
         retirerDuStock(quantite,article);
     }
 
@@ -134,34 +131,75 @@ public class Magasin implements iStock, iClientele, iPanier {
             QuantiteSuppPanierException, ArticleHorsPanierException,
             ArticleHorsStockException {
 
+        Commande cmd = paniers.get(client) ;
+        if (! clients.contains(client) || cmd == null) throw new ClientInconnuException() ;
 
+        cmd.retirer(quantite,article);
+        reapprovisionnerStock(article,quantite);
     }
 
     @Override
     public double consulterMontantPanier(iClient client) throws ClientInconnuException {
-        return 0.0 ;
+
+        Commande cmd = paniers.get(client) ;
+        if (! clients.contains(client) || cmd == null) throw new ClientInconnuException() ;
+        return cmd.montant() ;
     }
 
     @Override
     public void viderPanier(iClient client) throws ClientInconnuException {
-        // TODO
+
+        Commande cmd = paniers.get(client) ;
+        if (! clients.contains(client) || cmd == null) throw new ClientInconnuException() ;
+
+        List<Map.Entry<iArticle, Integer>> articles = cmd.listerCommande() ;
+        for (Map.Entry<iArticle, Integer> coupleArtQuantite: articles) {
+
+            iArticle article = coupleArtQuantite.getKey() ;
+            int quantite = coupleArtQuantite.getValue() ;
+
+            try {
+                reapprovisionnerStock(article,quantite);
+            } catch (ArticleHorsStockException | QuantiteNegativeOuNulleException e) {
+                e.printStackTrace();
+            }
+
+        }
+        paniers.replace(client, new Commande()) ;
     }
 
     @Override
     public void terminerLaCommande(iClient client) throws ClientInconnuException {
-        // TODO
+
+        Commande cmd = paniers.get(client) ;
+        if (! clients.contains(client) || cmd == null) throw new ClientInconnuException() ;
+
+        List<Commande> commandesDuClient = commandesFinies.get(client) ;
+        commandesDuClient.add(cmd) ;
+
+        paniers.replace(client, new Commande()) ;
     }
 
     @Override
     public List<Commande> listerCommandesTerminees(iClient client) throws ClientInconnuException {
-        // TODO
-        return null;
+
+        Commande cmd = paniers.get(client) ;
+        if (! clients.contains(client) || cmd == null) throw new ClientInconnuException() ;
+
+        return commandesFinies.get(client);
     }
 
     @Override
     public double consulterMontantTotalCommandes(iClient client) throws ClientInconnuException {
-        // TODO
-        return -1.0;
+
+        List<Commande> commandesDuClient = listerCommandesTerminees(client) ;
+        if (! clients.contains(client) || commandesDuClient == null) throw new ClientInconnuException() ;
+
+        double montantTotal = 0.0 ;
+        for (Commande cmd : commandesDuClient) {
+            montantTotal += cmd.montant() ;
+        }
+        return montantTotal;
     }
 
 
