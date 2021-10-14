@@ -48,3 +48,4 @@ permettant de "jouer" avec votre magasin de produits à vendre.
 Il devra y avoir des données, des commandes, etc.  pré-chargées dans l'application.
 
 https://random-data-api.com/documentation
+https://www.jsonschema2pojo.org/

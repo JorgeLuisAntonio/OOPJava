@@ -1,6 +1,4 @@
-package mesproduits;
-
-import magasin.iClient ;
+package magasin;
 
 public class Client implements iClient{
 
