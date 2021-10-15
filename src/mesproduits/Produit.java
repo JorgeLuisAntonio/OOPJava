@@ -4,18 +4,36 @@ import magasin.iArticle ;
 
 public class Produit implements iArticle{
 
+    private int reference ;
+    private String nom;
+    private double prix ;
+
+    public Produit(int ref, String nom, double prix) {
+        this.reference = ref;
+        this.nom = nom;
+        this.prix = prix;
+    }
+
     @Override
     public int reference() {
-        return 0;
+        return reference;
     }
 
     @Override
     public String nom() {
-        return null;
+        return nom;
     }
 
     @Override
     public double prix() {
-        return 0;
+        return prix;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (this.getClass() != o.getClass()) return false ;
+        Produit article = (Produit) o;
+        return this.reference() == article.reference();
     }
 }
